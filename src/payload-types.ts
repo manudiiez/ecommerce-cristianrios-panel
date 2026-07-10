@@ -69,6 +69,15 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    worlds: World;
+    categories: Category;
+    sizes: Size;
+    finishes: Finish;
+    products: Product;
+    'whatsapp-items': WhatsappItem;
+    kits: Kit;
+    'flash-deals': FlashDeal;
+    orders: Order;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,17 +87,30 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    worlds: WorldsSelect<false> | WorldsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    sizes: SizesSelect<false> | SizesSelect<true>;
+    finishes: FinishesSelect<false> | FinishesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    'whatsapp-items': WhatsappItemsSelect<false> | WhatsappItemsSelect<true>;
+    kits: KitsSelect<false> | KitsSelect<true>;
+    'flash-deals': FlashDealsSelect<false> | FlashDealsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    store: Store;
+  };
+  globalsSelect: {
+    store: StoreSelect<false> | StoreSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -122,7 +144,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -147,7 +169,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -163,10 +185,320 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "worlds".
+ */
+export interface World {
+  id: number;
+  /**
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   */
+  slug: string;
+  name: string;
+  kicker?: string | null;
+  blurb?: string | null;
+  /**
+   * Color usado para destacar este mundo en el diseño de la web.
+   */
+  accent: 'clay' | 'rose';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  /**
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   */
+  slug: string;
+  name: string;
+  world: number | World;
+  /**
+   * 'Catálogo': los productos se muestran con ficha, precio, y se agregan al pedido. 'WhatsApp': son ítems simples (por ejemplo sahumerios, velas, inciensos) que solo muestran un botón para consultar por WhatsApp, sin ficha de producto.
+   */
+  mode: 'catalog' | 'whatsapp';
+  /**
+   * Opcional. Dejalo vacío si esta categoría no tiene un descuento general.
+   */
+  discount?: {
+    pct?: number | null;
+    /**
+     * Ej: '20% OFF'
+     */
+    label?: string | null;
+  };
+  note?: string | null;
+  /**
+   * Se calcula solo, contando los productos de esta categoría.
+   */
+  count?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Esta es la tabla de precios de la tienda. El precio de cada producto sale de acá, no se edita en el producto.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sizes".
+ */
+export interface Size {
+  id: number;
+  /**
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   */
+  slug: string;
+  /**
+   * Ej: '15 cm', 'Chico'
+   */
+  label: string;
+  world: number | World;
+  /**
+   * Precio en pesos, sin decimales.
+   */
+  price: number;
+  /**
+   * Se suma al precio base si el cliente elige la versión pintada.
+   */
+  paintedAdd: number;
+  /**
+   * Número para ordenar de menor a mayor. Ej: 1, 2, 3…
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Los acabados disponibles para los productos (normalmente solo "crudo" y "pintada").
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "finishes".
+ */
+export interface Finish {
+  id: number;
+  /**
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   */
+  slug: string;
+  label: string;
+  /**
+   * Ej: 'Sin pintar'
+   */
+  sub?: string | null;
+  /**
+   * Color usado para mostrar una muestra visual de este acabado. Ej: #d8c3a5
+   */
+  swatch?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  /**
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   */
+  slug: string;
+  name: string;
+  category: number | Category;
+  /**
+   * Se valida automáticamente que coincida con el mundo de la categoría elegida.
+   */
+  world: number | World;
+  /**
+   * Deben pertenecer al mismo mundo del producto.
+   */
+  availableSizes: (number | Size)[];
+  finishes: (number | Finish)[];
+  blurb?: string | null;
+  /**
+   * Ej: 'Nuevo', 'Más vendido'
+   */
+  tag?: string | null;
+  /**
+   * Para mostrarlo en los destacados de la home.
+   */
+  featured?: boolean | null;
+  featuredOrder?: number | null;
+  /**
+   * Opcional. Dejalo vacío si este producto no tiene descuento.
+   */
+  discount?: {
+    pct?: number | null;
+    /**
+     * Ej: '20% OFF'
+     */
+    label?: string | null;
+    scope?: ('all' | 'finish') | null;
+    /**
+     * Solo aplica si el alcance es 'Solo un acabado'.
+     */
+    finish?: (number | null) | Finish;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Ítems de categorías de tipo WhatsApp (por ejemplo sahumerios, velas, inciensos): no tienen ficha de producto, solo se consultan por WhatsApp.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "whatsapp-items".
+ */
+export interface WhatsappItem {
+  id: number;
+  name: string;
+  /**
+   * Debe ser una categoría de tipo WhatsApp.
+   */
+  category: number | Category;
+  blurb?: string | null;
+  /**
+   * Mensaje prellenado que se abre en WhatsApp cuando el cliente hace clic en consultar.
+   */
+  waMessage?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Combos de precio fijo. El precio NO se calcula a partir de los ítems que lo componen.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kits".
+ */
+export interface Kit {
+  id: number;
+  /**
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   */
+  slug: string;
+  name: string;
+  blurb?: string | null;
+  world: number | World;
+  /**
+   * Ítems que componen el kit. 'Producto' es opcional: dejalo vacío para ítems que solo se venden por WhatsApp (sin ficha de producto).
+   */
+  items?:
+    | {
+        name: string;
+        qty: number;
+        product?: (number | null) | Product;
+        size?: (number | null) | Size;
+        finish?: (number | null) | Finish;
+        id?: string | null;
+      }[]
+    | null;
+  price: number;
+  /**
+   * Debe ser mayor al precio final, para mostrar el ahorro.
+   */
+  regular: number;
+  note?: string | null;
+  tag?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Ofertas por tiempo limitado. Son independientes de productos y kits, con su propio precio fijo.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "flash-deals".
+ */
+export interface FlashDeal {
+  id: number;
+  /**
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   */
+  slug: string;
+  name: string;
+  kicker?: string | null;
+  blurb?: string | null;
+  price: number;
+  /**
+   * Debe ser mayor al precio de oferta.
+   */
+  regular: number;
+  stockLeft: number;
+  /**
+   * El stock restante no puede ser mayor a este valor.
+   */
+  stockTotal: number;
+  /**
+   * Fecha y hora exacta en que termina la oferta. Se guarda tal cual, nunca se recalcula sola.
+   */
+  endsAt: string;
+  /**
+   * Variantes cosméticas (color, aroma). No cambian el precio.
+   */
+  variants?:
+    | {
+        slug: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * No es un cobro: es la captura de contacto y el detalle del carrito para que cierres la venta por WhatsApp o email.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  code?: string | null;
+  /**
+   * Nuevo → Contactado (ya hablaste con el cliente) → Cerrado (venta concretada) / Cancelado.
+   */
+  status: 'nuevo' | 'contactado' | 'cerrado' | 'cancelado';
+  form: {
+    nombre: string;
+    /**
+     * Necesario para armar el link de WhatsApp con el cliente.
+     */
+    tel: string;
+    email?: string | null;
+    canal?: ('whatsapp' | 'email' | 'cualquiera') | null;
+    tipo?: ('publico' | 'revendedor' | 'mayorista') | null;
+    notas?: string | null;
+  };
+  /**
+   * Foto del carrito al momento del pedido. Los precios quedan congelados acá.
+   */
+  items?:
+    | {
+        type: 'product' | 'kit' | 'flash';
+        refId: string;
+        name: string;
+        sizeLabel?: string | null;
+        finishLabel?: string | null;
+        variantLabel?: string | null;
+        /**
+         * Se recalcula en el servidor; el valor enviado por el cliente nunca se usa tal cual.
+         */
+        unitPrice: number;
+        qty: number;
+        sizeSlug?: string | null;
+        finishSlug?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  count?: number | null;
+  total?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +515,56 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'worlds';
+        value: number | World;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'sizes';
+        value: number | Size;
+      } | null)
+    | ({
+        relationTo: 'finishes';
+        value: number | Finish;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'whatsapp-items';
+        value: number | WhatsappItem;
+      } | null)
+    | ({
+        relationTo: 'kits';
+        value: number | Kit;
+      } | null)
+    | ({
+        relationTo: 'flash-deals';
+        value: number | FlashDeal;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +574,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +597,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -277,6 +645,190 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "worlds_select".
+ */
+export interface WorldsSelect<T extends boolean = true> {
+  slug?: T;
+  name?: T;
+  kicker?: T;
+  blurb?: T;
+  accent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  slug?: T;
+  name?: T;
+  world?: T;
+  mode?: T;
+  discount?:
+    | T
+    | {
+        pct?: T;
+        label?: T;
+      };
+  note?: T;
+  count?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sizes_select".
+ */
+export interface SizesSelect<T extends boolean = true> {
+  slug?: T;
+  label?: T;
+  world?: T;
+  price?: T;
+  paintedAdd?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "finishes_select".
+ */
+export interface FinishesSelect<T extends boolean = true> {
+  slug?: T;
+  label?: T;
+  sub?: T;
+  swatch?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  slug?: T;
+  name?: T;
+  category?: T;
+  world?: T;
+  availableSizes?: T;
+  finishes?: T;
+  blurb?: T;
+  tag?: T;
+  featured?: T;
+  featuredOrder?: T;
+  discount?:
+    | T
+    | {
+        pct?: T;
+        label?: T;
+        scope?: T;
+        finish?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "whatsapp-items_select".
+ */
+export interface WhatsappItemsSelect<T extends boolean = true> {
+  name?: T;
+  category?: T;
+  blurb?: T;
+  waMessage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kits_select".
+ */
+export interface KitsSelect<T extends boolean = true> {
+  slug?: T;
+  name?: T;
+  blurb?: T;
+  world?: T;
+  items?:
+    | T
+    | {
+        name?: T;
+        qty?: T;
+        product?: T;
+        size?: T;
+        finish?: T;
+        id?: T;
+      };
+  price?: T;
+  regular?: T;
+  note?: T;
+  tag?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "flash-deals_select".
+ */
+export interface FlashDealsSelect<T extends boolean = true> {
+  slug?: T;
+  name?: T;
+  kicker?: T;
+  blurb?: T;
+  price?: T;
+  regular?: T;
+  stockLeft?: T;
+  stockTotal?: T;
+  endsAt?: T;
+  variants?:
+    | T
+    | {
+        slug?: T;
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  code?: T;
+  status?: T;
+  form?:
+    | T
+    | {
+        nombre?: T;
+        tel?: T;
+        email?: T;
+        canal?: T;
+        tipo?: T;
+        notas?: T;
+      };
+  items?:
+    | T
+    | {
+        type?: T;
+        refId?: T;
+        name?: T;
+        sizeLabel?: T;
+        finishLabel?: T;
+        variantLabel?: T;
+        unitPrice?: T;
+        qty?: T;
+        sizeSlug?: T;
+        finishSlug?: T;
+        id?: T;
+      };
+  count?: T;
+  total?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -314,6 +866,48 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store".
+ */
+export interface Store {
+  id: number;
+  name: string;
+  tagline?: string | null;
+  /**
+   * Solo números, sin '+' ni espacios ni guiones. Ejemplo: 5492610000000 (código de país + código de área + número).
+   */
+  whatsapp: string;
+  /**
+   * Cómo se muestra el número en la web, con formato legible. Ej: +54 9 261 000-0000
+   */
+  whatsappDisplay?: string | null;
+  /**
+   * A esta dirección llegan los avisos de pedidos nuevos.
+   */
+  email: string;
+  /**
+   * Sin @, ej: hanna.yesosyaromas
+   */
+  instagram?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store_select".
+ */
+export interface StoreSelect<T extends boolean = true> {
+  name?: T;
+  tagline?: T;
+  whatsapp?: T;
+  whatsappDisplay?: T;
+  email?: T;
+  instagram?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

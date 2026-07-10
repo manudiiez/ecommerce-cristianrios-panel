@@ -1,0 +1,47 @@
+export const flashDealsData = [
+  {
+    slug: 'oferta-jesus-sagrado-corazon',
+    name: 'Jesús Sagrado Corazón 20 cm',
+    kicker: 'Solo por hoy',
+    blurb: 'Jesús Sagrado Corazón 20 cm, acabado a elección, con descuento especial.',
+    price: 5200,
+    regular: 6800,
+    stockLeft: 4,
+    stockTotal: 10,
+    endsAt: '2026-07-16T23:59:00.000-03:00',
+    variants: [
+      { slug: 'crudo', label: 'Crudo' },
+      { slug: 'pintada', label: 'Pintada' },
+    ],
+  },
+  {
+    slug: 'oferta-buda-abundancia',
+    name: 'Buda de la Abundancia Mediano',
+    kicker: 'Tiempo limitado',
+    blurb: 'Buda de la abundancia tamaño mediano con precio especial.',
+    price: 7000,
+    regular: 9200,
+    stockLeft: 6,
+    stockTotal: 12,
+    endsAt: '2026-07-23T23:59:00.000-03:00',
+    variants: [
+      { slug: 'crudo', label: 'Crudo' },
+      { slug: 'pintada', label: 'Pintada' },
+    ],
+  },
+  {
+    slug: 'oferta-set-portavelas',
+    name: 'Set Portavelas x2',
+    kicker: 'Última semana',
+    blurb: 'Combo de 2 portavelas a elección, acabado crudo.',
+    price: 8500,
+    regular: 11000,
+    stockLeft: 3,
+    stockTotal: 8,
+    endsAt: '2026-08-06T23:59:00.000-03:00',
+    variants: [
+      { slug: 'luna-mandala', label: 'Luna + Mandala' },
+      { slug: 'loto-geometrico', label: 'Flor de Loto + Geométrico' },
+    ],
+  },
+]
