@@ -10,9 +10,9 @@ export const categoriesData = [
   },
   { slug: 'angeles', name: 'Ángeles', worldSlug: 'religioso', mode: 'catalog' as const },
   // Holístico — catálogo
-  { slug: 'figuras', name: 'Figuras', worldSlug: 'holistico', mode: 'catalog' as const },
-  { slug: 'portavelas', name: 'Portavelas', worldSlug: 'holistico', mode: 'catalog' as const },
-  { slug: 'decorativos', name: 'Decorativos', worldSlug: 'holistico', mode: 'catalog' as const },
+  { slug: 'buda', name: 'Buda', worldSlug: 'holistico', mode: 'catalog' as const },
+  { slug: 'ganesha', name: 'Ganesha', worldSlug: 'holistico', mode: 'catalog' as const },
+  { slug: 'mano-de-fatima', name: 'Mano de Fátima', worldSlug: 'holistico', mode: 'catalog' as const },
   // Holístico — consulta por WhatsApp
   {
     slug: 'sahumerios',
