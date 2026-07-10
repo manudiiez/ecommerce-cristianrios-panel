@@ -62,6 +62,38 @@ Alternatively, you can use [Docker](https://www.docker.com) to spin up this temp
 
 That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
 
+## API de la tienda "Hanna · Yesos y Aromas"
+
+Backend headless para un frontend Next.js en otro repositorio. No hay pasarela de pagos: `orders` solo captura contacto + snapshot del carrito.
+
+### Colecciones y global
+
+`worlds`, `categories`, `sizes`, `finishes`, `products`, `whatsapp-items`, `kits`, `flash-deals`, `orders` (colecciones) y `store` (global). Catálogo: lectura pública, escritura solo admin. `orders`: creación pública (checkout), lectura/edición solo admin.
+
+### Filtros en `GET /api/products`
+
+Usan el `where` estándar de Payload (query params):
+
+- Por categoría: `?where[category][equals]=<id>`
+- Por mundo: `?where[world][equals]=<id>`
+- Por tamaño (al menos uno de la lista): `?where[availableSizes][in][]=<id1>&where[availableSizes][in][]=<id2>`
+- Solo con descuento: `?where[discount.pct][exists]=true`
+- Paginación/orden: `?limit=12&page=2&sort=-createdAt` (defaults de Payload)
+
+### Endpoints custom
+
+- `GET /api/flash-deals/soonest` → la oferta relámpago con `endsAt` futuro más próximo, o `null` si no hay ninguna vigente. `endsAt` se expone como timestamp epoch ms (number). `variantGroups` describe los ejes de variación (ej. Talla, Color) con sus valores; el frontend arma las combinaciones (S + Negra, M + Blanca, etc.), no vienen pre-generadas por la API. No afectan el precio.
+- `GET /api/products/:slug/related?limit=4` → productos relacionados: primero de la misma categoría, completando con productos del mismo mundo si no alcanza el límite.
+- `POST /api/pricing/quote` → body `{ productSlug, sizeSlug, finishSlug }`, responde `{ price, was? }` con el precio calculado server-side (`was` solo si hay descuento aplicado).
+
+### Variables de entorno de email
+
+`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM` — usadas para notificar a la dueña (`store.email`) cuando entra un pedido nuevo. Sin `SMTP_HOST` configurado, el envío se omite (se loguea el error) sin bloquear la creación del pedido.
+
+### Seed
+
+`pnpm seed` carga datos placeholder idempotentes (upsert por slug/nombre): 2 mundos, categorías, tamaños, acabados, 24 productos, kits, ofertas relámpago e ítems de WhatsApp. Se puede correr varias veces sin duplicar.
+
 ## Questions
 
 If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).

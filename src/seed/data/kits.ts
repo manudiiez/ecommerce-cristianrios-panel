@@ -1,0 +1,72 @@
+export const kitsData = [
+  {
+    slug: 'kit-altar-familiar',
+    name: 'Kit Altar Familiar',
+    blurb: 'Jesús Sagrado Corazón y Virgen de Luján para armar tu altar en casa.',
+    worldSlug: 'religioso',
+    price: 12000,
+    regular: 15000,
+    tag: 'Combo',
+    items: [
+      {
+        name: 'Jesús Sagrado Corazón 15 cm crudo',
+        qty: 1,
+        productSlug: 'jesus-sagrado-corazon',
+        sizeSlug: 'r-15',
+        finishSlug: 'crudo',
+      },
+      {
+        name: 'Virgen de Luján 15 cm crudo',
+        qty: 1,
+        productSlug: 'virgen-de-lujan',
+        sizeSlug: 'r-15',
+        finishSlug: 'crudo',
+      },
+      { name: 'Sahumerio de regalo', qty: 1 },
+    ],
+  },
+  {
+    slug: 'kit-angeles-protectores',
+    name: 'Kit Ángeles Protectores',
+    blurb: 'Dos Ángeles de la Guarda para acompañar tu hogar.',
+    worldSlug: 'religioso',
+    price: 9000,
+    regular: 11500,
+    items: [
+      {
+        name: 'Ángel de la Guarda 15 cm crudo',
+        qty: 2,
+        productSlug: 'angel-de-la-guarda',
+        sizeSlug: 'r-15',
+        finishSlug: 'crudo',
+      },
+      { name: 'Vela aromática de regalo', qty: 1 },
+    ],
+  },
+  {
+    slug: 'kit-bienestar-total',
+    name: 'Kit Bienestar Total',
+    blurb: 'Buda Meditando, Portavelas Luna y sahumerios surtidos.',
+    worldSlug: 'holistico',
+    price: 15000,
+    regular: 19000,
+    tag: 'Combo',
+    items: [
+      {
+        name: 'Buda Meditando chico crudo',
+        qty: 1,
+        productSlug: 'buda-meditando',
+        sizeSlug: 'h-chico',
+        finishSlug: 'crudo',
+      },
+      {
+        name: 'Portavelas Luna mini crudo',
+        qty: 1,
+        productSlug: 'portavelas-luna',
+        sizeSlug: 'h-mini',
+        finishSlug: 'crudo',
+      },
+      { name: 'Sahumerios surtidos', qty: 3 },
+    ],
+  },
+]
