@@ -9,9 +9,15 @@ export const flashDealsData = [
     stockLeft: 4,
     stockTotal: 10,
     endsAt: '2026-07-16T23:59:00.000-03:00',
-    variants: [
-      { slug: 'crudo', label: 'Crudo' },
-      { slug: 'pintada', label: 'Pintada' },
+    variantGroups: [
+      {
+        slug: 'acabado',
+        name: 'Acabado',
+        values: [
+          { slug: 'crudo', label: 'Crudo' },
+          { slug: 'pintada', label: 'Pintada' },
+        ],
+      },
     ],
   },
   {
@@ -24,9 +30,24 @@ export const flashDealsData = [
     stockLeft: 6,
     stockTotal: 12,
     endsAt: '2026-07-23T23:59:00.000-03:00',
-    variants: [
-      { slug: 'crudo', label: 'Crudo' },
-      { slug: 'pintada', label: 'Pintada' },
+    // Ejemplo de dos ejes de variación combinados (Acabado x Aroma).
+    variantGroups: [
+      {
+        slug: 'acabado',
+        name: 'Acabado',
+        values: [
+          { slug: 'crudo', label: 'Crudo' },
+          { slug: 'pintada', label: 'Pintada' },
+        ],
+      },
+      {
+        slug: 'aroma',
+        name: 'Aroma',
+        values: [
+          { slug: 'sandalo', label: 'Sándalo' },
+          { slug: 'lavanda', label: 'Lavanda' },
+        ],
+      },
     ],
   },
   {
@@ -39,9 +60,15 @@ export const flashDealsData = [
     stockLeft: 3,
     stockTotal: 8,
     endsAt: '2026-08-06T23:59:00.000-03:00',
-    variants: [
-      { slug: 'luna-mandala', label: 'Luna + Mandala' },
-      { slug: 'loto-geometrico', label: 'Flor de Loto + Geométrico' },
+    variantGroups: [
+      {
+        slug: 'modelo',
+        name: 'Modelo',
+        values: [
+          { slug: 'luna-mandala', label: 'Luna + Mandala' },
+          { slug: 'loto-geometrico', label: 'Flor de Loto + Geométrico' },
+        ],
+      },
     ],
   },
 ]

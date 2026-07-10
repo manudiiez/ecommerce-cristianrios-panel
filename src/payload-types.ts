@@ -431,12 +431,22 @@ export interface FlashDeal {
    */
   endsAt: string;
   /**
-   * Variantes cosméticas (color, aroma). No cambian el precio.
+   * Ejes de variación del producto (ej: Talla, Color). El frontend arma automáticamente todas las combinaciones posibles (S + Negra, M + Blanca, etc). No cambian el precio.
    */
-  variants?:
+  variantGroups?:
     | {
         slug: string;
-        label: string;
+        /**
+         * Ej: 'Talla', 'Color'
+         */
+        name: string;
+        values?:
+          | {
+              slug: string;
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -780,11 +790,18 @@ export interface FlashDealsSelect<T extends boolean = true> {
   stockLeft?: T;
   stockTotal?: T;
   endsAt?: T;
-  variants?:
+  variantGroups?:
     | T
     | {
         slug?: T;
-        label?: T;
+        name?: T;
+        values?:
+          | T
+          | {
+              slug?: T;
+              label?: T;
+              id?: T;
+            };
         id?: T;
       };
   updatedAt?: T;

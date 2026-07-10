@@ -4,6 +4,7 @@ import { admins, anyone } from '../access'
 import { soonestEndpoint } from '../endpoints/flashDeals/soonest'
 import { epochEndsAt } from '../hooks/flashDeals/epochEndsAt'
 import { validateFlashDealPricing } from '../hooks/flashDeals/validateFlashDealPricing'
+import { validateVariantGroups } from '../hooks/flashDeals/validateVariantGroups'
 
 export const FlashDeals: CollectionConfig = {
   slug: 'flash-deals',
@@ -26,7 +27,7 @@ export const FlashDeals: CollectionConfig = {
     delete: admins,
   },
   hooks: {
-    beforeValidate: [validateFlashDealPricing],
+    beforeValidate: [validateFlashDealPricing, validateVariantGroups],
     afterRead: [epochEndsAt],
   },
   fields: [
@@ -104,11 +105,12 @@ export const FlashDeals: CollectionConfig = {
       },
     },
     {
-      name: 'variants',
+      name: 'variantGroups',
       type: 'array',
-      label: 'Variantes',
+      label: 'Grupos de variación',
       admin: {
-        description: 'Variantes cosméticas (color, aroma). No cambian el precio.',
+        description:
+          "Ejes de variación del producto (ej: Talla, Color). El frontend arma automáticamente todas las combinaciones posibles (S + Negra, M + Blanca, etc). No cambian el precio.",
       },
       fields: [
         {
@@ -118,10 +120,33 @@ export const FlashDeals: CollectionConfig = {
           label: 'Identificador (slug)',
         },
         {
-          name: 'label',
+          name: 'name',
           type: 'text',
           required: true,
-          label: 'Etiqueta visible',
+          label: 'Nombre del grupo',
+          admin: {
+            description: "Ej: 'Talla', 'Color'",
+          },
+        },
+        {
+          name: 'values',
+          type: 'array',
+          minRows: 1,
+          label: 'Valores',
+          fields: [
+            {
+              name: 'slug',
+              type: 'text',
+              required: true,
+              label: 'Identificador (slug)',
+            },
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+              label: 'Etiqueta visible',
+            },
+          ],
         },
       ],
     },

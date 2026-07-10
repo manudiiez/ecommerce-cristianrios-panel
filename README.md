@@ -82,7 +82,7 @@ Usan el `where` estándar de Payload (query params):
 
 ### Endpoints custom
 
-- `GET /api/flash-deals/soonest` → la oferta relámpago con `endsAt` futuro más próximo, o `null` si no hay ninguna vigente. `endsAt` se expone como timestamp epoch ms (number).
+- `GET /api/flash-deals/soonest` → la oferta relámpago con `endsAt` futuro más próximo, o `null` si no hay ninguna vigente. `endsAt` se expone como timestamp epoch ms (number). `variantGroups` describe los ejes de variación (ej. Talla, Color) con sus valores; el frontend arma las combinaciones (S + Negra, M + Blanca, etc.), no vienen pre-generadas por la API. No afectan el precio.
 - `GET /api/products/:slug/related?limit=4` → productos relacionados: primero de la misma categoría, completando con productos del mismo mundo si no alcanza el límite.
 - `POST /api/pricing/quote` → body `{ productSlug, sizeSlug, finishSlug }`, responde `{ price, was? }` con el precio calculado server-side (`was` solo si hay descuento aplicado).
 
