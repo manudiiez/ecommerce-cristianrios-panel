@@ -190,7 +190,7 @@ export interface Media {
 export interface World {
   id: number;
   /**
-   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.
    */
   slug: string;
   name: string;
@@ -210,7 +210,7 @@ export interface World {
 export interface Category {
   id: number;
   /**
-   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.
    */
   slug: string;
   name: string;
@@ -246,7 +246,7 @@ export interface Category {
 export interface Size {
   id: number;
   /**
-   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.
    */
   slug: string;
   /**
@@ -278,7 +278,7 @@ export interface Size {
 export interface Finish {
   id: number;
   /**
-   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.
    */
   slug: string;
   label: string;
@@ -300,7 +300,7 @@ export interface Finish {
 export interface Product {
   id: number;
   /**
-   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.
    */
   slug: string;
   name: string;
@@ -372,7 +372,7 @@ export interface WhatsappItem {
 export interface Kit {
   id: number;
   /**
-   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.
    */
   slug: string;
   name: string;
@@ -410,7 +410,7 @@ export interface Kit {
 export interface FlashDeal {
   id: number;
   /**
-   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.
+   * Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.
    */
   slug: string;
   name: string;
