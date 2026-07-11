@@ -325,7 +325,7 @@ export interface Product {
   featured?: boolean | null;
   featuredOrder?: number | null;
   /**
-   * Opcional. Dejalo vacío si este producto no tiene descuento.
+   * Opcional. Dejalo vacío si este producto no tiene descuento. Si elegís un alcance específico de acabado y de tamaño a la vez, el descuento solo aplica cuando se cumplen ambos.
    */
   discount?: {
     pct?: number | null;
@@ -338,6 +338,11 @@ export interface Product {
      * Solo aplica si el alcance es 'Solo un acabado'.
      */
     finish?: (number | null) | Finish;
+    sizeScope?: ('all' | 'specific') | null;
+    /**
+     * Solo aplica si el alcance por tamaño es 'Tamaños específicos'.
+     */
+    sizes?: (number | Size)[] | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -734,6 +739,8 @@ export interface ProductsSelect<T extends boolean = true> {
         label?: T;
         scope?: T;
         finish?: T;
+        sizeScope?: T;
+        sizes?: T;
       };
   updatedAt?: T;
   createdAt?: T;

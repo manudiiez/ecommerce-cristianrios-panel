@@ -36,6 +36,7 @@ export const quoteEndpoint: Endpoint = {
     const result = computeProductPrice({
       size: { price: size.price, paintedAdd: size.paintedAdd },
       finishSlug: finish.slug,
+      sizeSlug: size.slug,
       discount: normalizeDiscount(product.discount),
     })
 
