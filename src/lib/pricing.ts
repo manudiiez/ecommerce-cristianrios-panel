@@ -4,8 +4,9 @@
  * lógica en otro lado.
  *
  * base = size.price + (finish === "pintada" ? size.paintedAdd : 0)
- * si el producto tiene discount y aplica (scope "all", o scope "finish"
- * con el finish elegido): final = round100(base * (1 - pct/100))
+ * si el producto tiene discount y aplica (scope "all", o scope "finish" con
+ * el finish elegido) Y (sizeScope "all", o sizeScope "specific" con el size
+ * elegido entre los seleccionados): final = round100(base * (1 - pct/100))
  * si no: final = base
  */
 
@@ -20,30 +21,45 @@ export interface PricingDiscount {
   pct?: number | null
   scope?: ('all' | 'finish') | null
   finish?: string | null
+  sizeScope?: ('all' | 'specific') | null
+  sizes?: string[] | null
 }
 
 /**
  * Shape of `product.discount` as returned by the Local/REST API: `finish`
- * comes back as a populated relationship (object with `slug`), a bare id,
- * or empty, depending on query depth — never a slug string directly.
+ * and `sizes` vienen como relationship poblada (objeto con `slug`), id
+ * crudo, o vacío, según el depth de la query — nunca un slug directo.
  */
 export interface RawProductDiscount {
   pct?: number | null
   scope?: ('all' | 'finish') | null
   finish?: string | number | { slug?: string | null } | null
+  sizeScope?: ('all' | 'specific') | null
+  sizes?: Array<string | number | { slug?: string | null }> | null
 }
 
 export function normalizeDiscount(discount?: RawProductDiscount | null): PricingDiscount | undefined {
   if (!discount) return undefined
   const finishSlug =
     discount.finish && typeof discount.finish === 'object' ? (discount.finish.slug ?? null) : null
+  const sizeSlugs =
+    discount.sizes
+      ?.map((s) => (s && typeof s === 'object' ? (s.slug ?? null) : null))
+      .filter((slug): slug is string => Boolean(slug)) ?? null
 
-  return { pct: discount.pct, scope: discount.scope, finish: finishSlug }
+  return {
+    pct: discount.pct,
+    scope: discount.scope,
+    finish: finishSlug,
+    sizeScope: discount.sizeScope,
+    sizes: sizeSlugs,
+  }
 }
 
 export interface ComputeProductPriceArgs {
   size: PricingSize
   finishSlug: string
+  sizeSlug: string
   discount?: PricingDiscount | null
 }
 
@@ -55,12 +71,15 @@ export interface ComputeProductPriceResult {
 export function computeProductPrice({
   size,
   finishSlug,
+  sizeSlug,
   discount,
 }: ComputeProductPriceArgs): ComputeProductPriceResult {
   const base = size.price + (finishSlug === 'pintada' ? size.paintedAdd : 0)
 
-  const discountApplies =
-    Boolean(discount?.pct) && (discount?.scope !== 'finish' || discount?.finish === finishSlug)
+  const finishMatches = discount?.scope !== 'finish' || discount?.finish === finishSlug
+  const sizeMatches =
+    discount?.sizeScope !== 'specific' || Boolean(discount?.sizes?.includes(sizeSlug))
+  const discountApplies = Boolean(discount?.pct) && finishMatches && sizeMatches
 
   if (!discountApplies) return { price: base }
 

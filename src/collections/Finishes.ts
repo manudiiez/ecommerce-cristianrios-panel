@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { admins, anyone } from '../access'
+import { admins, anyone, lockedAfterCreate } from '../access'
 
 export const Finishes: CollectionConfig = {
   slug: 'finishes',
@@ -27,9 +27,12 @@ export const Finishes: CollectionConfig = {
       required: true,
       unique: true,
       label: 'Identificador (slug)',
+      access: {
+        update: lockedAfterCreate,
+      },
       admin: {
         description:
-          'Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.',
+          'Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.',
       },
     },
     {

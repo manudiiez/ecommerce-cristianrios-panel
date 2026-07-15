@@ -73,5 +73,12 @@ export const validateProductRelations: CollectionBeforeValidateHook = async ({
     )
   }
 
+  if (merged.discount?.sizeScope === 'specific' && !(merged.discount?.sizes?.length > 0)) {
+    throw new APIError(
+      "Elegiste 'Tamaños específicos' para el descuento: seleccioná al menos un tamaño.",
+      400,
+    )
+  }
+
   return data
 }

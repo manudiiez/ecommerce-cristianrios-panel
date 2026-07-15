@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { admins, anyone } from '../access'
+import { admins, anyone, lockedAfterCreate } from '../access'
 import { relatedEndpoint } from '../endpoints/products/related'
 import { validateProductRelations } from '../hooks/products/validateProductRelations'
 
@@ -32,9 +32,12 @@ export const Products: CollectionConfig = {
       required: true,
       unique: true,
       label: 'Identificador (slug)',
+      access: {
+        update: lockedAfterCreate,
+      },
       admin: {
         description:
-          'Identificador único usado por la web (minúsculas, sin espacios ni acentos). No lo cambies una vez publicado o se rompen los enlaces.',
+          'Identificador único usado por la web (minúsculas, sin espacios ni acentos). No se puede modificar una vez creado el ítem; si te equivocaste, borralo y creá uno nuevo.',
       },
     },
     {
@@ -114,7 +117,8 @@ export const Products: CollectionConfig = {
       type: 'group',
       label: 'Descuento',
       admin: {
-        description: 'Opcional. Dejalo vacío si este producto no tiene descuento.',
+        description:
+          'Opcional. Dejalo vacío si este producto no tiene descuento. Si elegís un alcance específico de acabado y de tamaño a la vez, el descuento solo aplica cuando se cumplen ambos.',
       },
       fields: [
         {
@@ -150,6 +154,27 @@ export const Products: CollectionConfig = {
           admin: {
             condition: (_, siblingData) => siblingData?.scope === 'finish',
             description: "Solo aplica si el alcance es 'Solo un acabado'.",
+          },
+        },
+        {
+          name: 'sizeScope',
+          type: 'select',
+          defaultValue: 'all',
+          label: 'Alcance por tamaño',
+          options: [
+            { label: 'Todos los tamaños', value: 'all' },
+            { label: 'Tamaños específicos', value: 'specific' },
+          ],
+        },
+        {
+          name: 'sizes',
+          type: 'relationship',
+          relationTo: 'sizes',
+          hasMany: true,
+          label: 'Tamaños con descuento',
+          admin: {
+            condition: (_, siblingData) => siblingData?.sizeScope === 'specific',
+            description: "Solo aplica si el alcance por tamaño es 'Tamaños específicos'.",
           },
         },
       ],

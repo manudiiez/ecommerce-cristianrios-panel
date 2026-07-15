@@ -1,6 +1,7 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { es } from '@payloadcms/translations/languages/es'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -45,6 +46,10 @@ export default buildConfig({
   ],
   globals: [Store],
   endpoints: [quoteEndpoint],
+  i18n: {
+    fallbackLanguage: 'es',
+    supportedLanguages: { es },
+  },
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

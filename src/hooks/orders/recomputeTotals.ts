@@ -64,6 +64,7 @@ export const recomputeTotals: CollectionBeforeChangeHook = async ({ data, req })
       const { price } = computeProductPrice({
         size: { price: size.price, paintedAdd: size.paintedAdd },
         finishSlug: finish.slug,
+        sizeSlug: size.slug,
         discount: normalizeDiscount(product.discount),
       })
 
