@@ -25,6 +25,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Build-time argument recibido desde GitHub Actions (build-args en el workflow).
+# Debe declararse aquí para que Next.js pueda inlinearlo en el bundle del cliente.
+ARG NEXT_PUBLIC_USE_MOCKS
+ENV NEXT_PUBLIC_USE_MOCKS=${NEXT_PUBLIC_USE_MOCKS}
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
