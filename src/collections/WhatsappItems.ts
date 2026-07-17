@@ -48,6 +48,12 @@ export const WhatsappItems: CollectionConfig = {
       label: 'Descripción breve',
     },
     {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Imagen',
+    },
+    {
       name: 'waMessage',
       type: 'textarea',
       label: 'Mensaje de WhatsApp',

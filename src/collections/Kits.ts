@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { admins, anyone, lockedAfterCreate } from '../access'
 import { validateKitPricing } from '../hooks/kits/validateKitPricing'
+import { enforceSingleCover } from '../hooks/shared/enforceSingleCover'
 
 export const Kits: CollectionConfig = {
   slug: 'kits',
@@ -22,7 +23,7 @@ export const Kits: CollectionConfig = {
     delete: admins,
   },
   hooks: {
-    beforeValidate: [validateKitPricing],
+    beforeValidate: [enforceSingleCover('images'), validateKitPricing],
   },
   fields: [
     {
@@ -49,6 +50,34 @@ export const Kits: CollectionConfig = {
       name: 'blurb',
       type: 'textarea',
       label: 'Descripción',
+    },
+    {
+      name: 'images',
+      type: 'array',
+      label: 'Imágenes',
+      labels: {
+        singular: 'Imagen',
+        plural: 'Imágenes',
+      },
+      admin: {
+        initCollapsed: true,
+        description: 'Marcá una imagen como portada; si no marcás ninguna se usa la primera.',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          label: 'Imagen',
+        },
+        {
+          name: 'cover',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Portada',
+        },
+      ],
     },
     {
       name: 'world',

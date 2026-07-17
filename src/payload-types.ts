@@ -314,6 +314,24 @@ export interface Product {
    */
   availableSizes: (number | Size)[];
   finishes: (number | Finish)[];
+  /**
+   * Marcá una imagen como portada; si no marcás ninguna se usa la primera. Tamaño y acabado son opcionales: completalos solo si querés que esa imagen se muestre automáticamente al elegir esa combinación en la web.
+   */
+  images?:
+    | {
+        image: number | Media;
+        cover?: boolean | null;
+        /**
+         * Debe ser uno de los tamaños disponibles del producto.
+         */
+        size?: (number | null) | Size;
+        /**
+         * Debe ser uno de los acabados disponibles del producto.
+         */
+        finish?: (number | null) | Finish;
+        id?: string | null;
+      }[]
+    | null;
   blurb?: string | null;
   /**
    * Ej: 'Nuevo', 'Más vendido'
@@ -361,6 +379,7 @@ export interface WhatsappItem {
    */
   category: number | Category;
   blurb?: string | null;
+  image?: (number | null) | Media;
   /**
    * Mensaje prellenado que se abre en WhatsApp cuando el cliente hace clic en consultar.
    */
@@ -382,6 +401,16 @@ export interface Kit {
   slug: string;
   name: string;
   blurb?: string | null;
+  /**
+   * Marcá una imagen como portada; si no marcás ninguna se usa la primera.
+   */
+  images?:
+    | {
+        image: number | Media;
+        cover?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   world: number | World;
   /**
    * Ítems que componen el kit. 'Producto' es opcional: dejalo vacío para ítems que solo se venden por WhatsApp (sin ficha de producto).
@@ -421,6 +450,16 @@ export interface FlashDeal {
   name: string;
   kicker?: string | null;
   blurb?: string | null;
+  /**
+   * Marcá una imagen como portada; si no marcás ninguna se usa la primera.
+   */
+  images?:
+    | {
+        image: number | Media;
+        cover?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   price: number;
   /**
    * Debe ser mayor al precio de oferta.
@@ -728,6 +767,15 @@ export interface ProductsSelect<T extends boolean = true> {
   world?: T;
   availableSizes?: T;
   finishes?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        cover?: T;
+        size?: T;
+        finish?: T;
+        id?: T;
+      };
   blurb?: T;
   tag?: T;
   featured?: T;
@@ -753,6 +801,7 @@ export interface WhatsappItemsSelect<T extends boolean = true> {
   name?: T;
   category?: T;
   blurb?: T;
+  image?: T;
   waMessage?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -765,6 +814,13 @@ export interface KitsSelect<T extends boolean = true> {
   slug?: T;
   name?: T;
   blurb?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        cover?: T;
+        id?: T;
+      };
   world?: T;
   items?:
     | T
@@ -792,6 +848,13 @@ export interface FlashDealsSelect<T extends boolean = true> {
   name?: T;
   kicker?: T;
   blurb?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        cover?: T;
+        id?: T;
+      };
   price?: T;
   regular?: T;
   stockLeft?: T;
