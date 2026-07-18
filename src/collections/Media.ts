@@ -21,5 +21,22 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     mimeTypes: ['image/*'],
+    adminThumbnail: 'thumbnail',
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 500,
+        height: 600,
+        fit: 'inside',
+        withoutEnlargement: true,
+        formatOptions: { format: 'webp', options: { quality: 70 } },
+      },
+      {
+        name: 'large',
+        width: 1600,
+        withoutEnlargement: true,
+        formatOptions: { format: 'webp', options: { quality: 90 } },
+      },
+    ],
   },
 }
