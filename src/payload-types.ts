@@ -543,7 +543,7 @@ export interface Order {
      * Necesario para armar el link de WhatsApp con el cliente.
      */
     tel: string;
-    email?: string | null;
+    email: string;
     canal?: ('whatsapp' | 'email' | 'cualquiera') | null;
     tipo?: ('publico' | 'revendedor' | 'mayorista') | null;
     notas?: string | null;
