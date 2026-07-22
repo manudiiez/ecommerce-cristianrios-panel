@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { admins, anyone, lockedAfterCreate } from '../access'
 import { relatedEndpoint } from '../endpoints/products/related'
 import { validateProductRelations } from '../hooks/products/validateProductRelations'
+import { enforceSingleCover } from '../hooks/shared/enforceSingleCover'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -23,7 +24,7 @@ export const Products: CollectionConfig = {
     delete: admins,
   },
   hooks: {
-    beforeValidate: [validateProductRelations],
+    beforeValidate: [enforceSingleCover('images'), validateProductRelations],
   },
   fields: [
     {
@@ -81,6 +82,67 @@ export const Products: CollectionConfig = {
       hasMany: true,
       required: true,
       label: 'Acabados disponibles',
+    },
+    {
+      name: 'images',
+      type: 'array',
+      label: 'Imágenes',
+      labels: {
+        singular: 'Imagen',
+        plural: 'Imágenes',
+      },
+      admin: {
+        initCollapsed: true,
+        description:
+          'Marcá una imagen como portada; si no marcás ninguna se usa la primera. Tamaño y acabado son opcionales: completalos solo si querés que esa imagen se muestre automáticamente al elegir esa combinación en la web.',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          label: 'Imagen',
+        },
+        {
+          name: 'cover',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Portada',
+        },
+        {
+          name: 'size',
+          type: 'relationship',
+          relationTo: 'sizes',
+          label: 'Tamaño (opcional)',
+          filterOptions: ({ data }) => ({
+            id: {
+              in: ((data?.availableSizes ?? []) as Array<string | { id: string }>).map((s) =>
+                typeof s === 'object' ? s.id : s,
+              ),
+            },
+          }),
+          admin: {
+            description: 'Debe ser uno de los tamaños disponibles del producto.',
+          },
+        },
+        {
+          name: 'finish',
+          type: 'relationship',
+          relationTo: 'finishes',
+          label: 'Acabado (opcional)',
+          filterOptions: ({ data }) => ({
+            id: {
+              in: ((data?.finishes ?? []) as Array<string | { id: string }>).map((f) =>
+                typeof f === 'object' ? f.id : f,
+              ),
+            },
+          }),
+          admin: {
+            description: 'Debe ser uno de los acabados disponibles del producto.',
+          },
+        },
+      ],
     },
     {
       name: 'blurb',

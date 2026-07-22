@@ -43,8 +43,8 @@ export const validateProductRelations: CollectionBeforeValidateHook = async ({
   }
 
   const availableSizes = (merged.availableSizes ?? []) as Array<string | { id: string }>
+  const sizeIds = availableSizes.map((s) => (typeof s === 'object' ? s.id : s))
   if (availableSizes.length > 0 && worldId) {
-    const sizeIds = availableSizes.map((s) => (typeof s === 'object' ? s.id : s))
     const { docs: sizes } = await req.payload.find({
       collection: 'sizes',
       where: { id: { in: sizeIds } },
@@ -64,6 +64,37 @@ export const validateProductRelations: CollectionBeforeValidateHook = async ({
         400,
       )
     }
+  }
+
+  const finishes = (merged.finishes ?? []) as Array<string | { id: string }>
+  const finishIds = finishes.map((f) => (typeof f === 'object' ? f.id : f))
+
+  const images = (merged.images ?? []) as Array<{
+    size?: string | { id: string } | null
+    finish?: string | { id: string } | null
+  }>
+  const invalidImageSize = images.some((image) => {
+    if (!image.size) return false
+    const imageSizeId = typeof image.size === 'object' ? image.size.id : image.size
+    return !sizeIds.some((id) => String(id) === String(imageSizeId))
+  })
+  if (invalidImageSize) {
+    throw new APIError(
+      'Una de las imágenes tiene un tamaño que no está entre los tamaños disponibles del producto.',
+      400,
+    )
+  }
+
+  const invalidImageFinish = images.some((image) => {
+    if (!image.finish) return false
+    const imageFinishId = typeof image.finish === 'object' ? image.finish.id : image.finish
+    return !finishIds.some((id) => String(id) === String(imageFinishId))
+  })
+  if (invalidImageFinish) {
+    throw new APIError(
+      'Una de las imágenes tiene un acabado que no está entre los acabados disponibles del producto.',
+      400,
+    )
   }
 
   if (merged.discount?.scope === 'finish' && !merged.discount?.finish) {

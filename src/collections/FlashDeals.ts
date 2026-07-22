@@ -5,6 +5,7 @@ import { soonestEndpoint } from '../endpoints/flashDeals/soonest'
 import { epochEndsAt } from '../hooks/flashDeals/epochEndsAt'
 import { validateFlashDealPricing } from '../hooks/flashDeals/validateFlashDealPricing'
 import { validateVariantGroups } from '../hooks/flashDeals/validateVariantGroups'
+import { enforceSingleCover } from '../hooks/shared/enforceSingleCover'
 
 export const FlashDeals: CollectionConfig = {
   slug: 'flash-deals',
@@ -27,7 +28,7 @@ export const FlashDeals: CollectionConfig = {
     delete: admins,
   },
   hooks: {
-    beforeValidate: [validateFlashDealPricing, validateVariantGroups],
+    beforeValidate: [enforceSingleCover('images'), validateFlashDealPricing, validateVariantGroups],
     afterRead: [epochEndsAt],
   },
   fields: [
@@ -60,6 +61,34 @@ export const FlashDeals: CollectionConfig = {
       name: 'blurb',
       type: 'textarea',
       label: 'Descripción',
+    },
+    {
+      name: 'images',
+      type: 'array',
+      label: 'Imágenes',
+      labels: {
+        singular: 'Imagen',
+        plural: 'Imágenes',
+      },
+      admin: {
+        initCollapsed: true,
+        description: 'Marcá una imagen como portada; si no marcás ninguna se usa la primera.',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          label: 'Imagen',
+        },
+        {
+          name: 'cover',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Portada',
+        },
+      ],
     },
     {
       name: 'price',

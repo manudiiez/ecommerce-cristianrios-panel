@@ -15,7 +15,8 @@ export const Orders: CollectionConfig = {
     useAsTitle: 'code',
     group: 'Ventas',
     defaultColumns: ['code', 'status', 'form.nombre', 'total', 'createdAt'],
-    description: 'No es un cobro: es la captura de contacto y el detalle del carrito para que cierres la venta por WhatsApp o email.',
+    description:
+      'No es un cobro: es la captura de contacto y el detalle del carrito para que cierres la venta por WhatsApp o email.',
   },
   defaultSort: '-createdAt',
   access: {
@@ -78,6 +79,7 @@ export const Orders: CollectionConfig = {
         {
           name: 'email',
           type: 'email',
+          required: true,
           label: 'Email',
         },
         {
@@ -162,7 +164,8 @@ export const Orders: CollectionConfig = {
           required: true,
           label: 'Precio unitario',
           admin: {
-            description: 'Se recalcula en el servidor; el valor enviado por el cliente nunca se usa tal cual.',
+            description:
+              'Se recalcula en el servidor; el valor enviado por el cliente nunca se usa tal cual.',
           },
         },
         {
