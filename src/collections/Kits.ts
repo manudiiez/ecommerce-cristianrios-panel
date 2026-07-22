@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { admins, anyone, lockedAfterCreate } from '../access'
+import { syncKitItems } from '../hooks/kits/syncKitItems'
 import { validateKitPricing } from '../hooks/kits/validateKitPricing'
 import { enforceSingleCover } from '../hooks/shared/enforceSingleCover'
 
@@ -23,7 +24,7 @@ export const Kits: CollectionConfig = {
     delete: admins,
   },
   hooks: {
-    beforeValidate: [enforceSingleCover('images'), validateKitPricing],
+    beforeValidate: [enforceSingleCover('images'), syncKitItems, validateKitPricing],
   },
   fields: [
     {
@@ -99,8 +100,12 @@ export const Kits: CollectionConfig = {
         {
           name: 'name',
           type: 'text',
-          required: true,
           label: 'Nombre visible',
+          admin: {
+            condition: (_, siblingData) => !siblingData?.product,
+            description:
+              'Solo para ítems sin producto (ventas por WhatsApp). Si elegís un producto, se usa su nombre automáticamente.',
+          },
         },
         {
           name: 'qty',
@@ -120,12 +125,64 @@ export const Kits: CollectionConfig = {
           type: 'relationship',
           relationTo: 'sizes',
           label: 'Tamaño (opcional)',
+          admin: {
+            condition: (_, siblingData) => Boolean(siblingData?.product),
+            description: 'Solo se muestran los tamaños disponibles del producto elegido.',
+          },
+          filterOptions: async ({ siblingData, req }) => {
+            const productId =
+              typeof (siblingData as { product?: string | { id: string } } | undefined)
+                ?.product === 'object'
+                ? (siblingData as { product?: { id: string } }).product?.id
+                : (siblingData as { product?: string } | undefined)?.product
+
+            if (!productId) return false
+
+            const product = await req.payload.findByID({
+              collection: 'products',
+              id: productId,
+              depth: 0,
+              req,
+            })
+
+            const sizeIds = (product?.availableSizes ?? []).map((s) =>
+              typeof s === 'object' ? s.id : s,
+            )
+
+            return { id: { in: sizeIds } }
+          },
         },
         {
           name: 'finish',
           type: 'relationship',
           relationTo: 'finishes',
           label: 'Acabado (opcional)',
+          admin: {
+            condition: (_, siblingData) => Boolean(siblingData?.product),
+            description: 'Solo se muestran los acabados disponibles del producto elegido.',
+          },
+          filterOptions: async ({ siblingData, req }) => {
+            const productId =
+              typeof (siblingData as { product?: string | { id: string } } | undefined)
+                ?.product === 'object'
+                ? (siblingData as { product?: { id: string } }).product?.id
+                : (siblingData as { product?: string } | undefined)?.product
+
+            if (!productId) return false
+
+            const product = await req.payload.findByID({
+              collection: 'products',
+              id: productId,
+              depth: 0,
+              req,
+            })
+
+            const finishIds = (product?.finishes ?? []).map((f) =>
+              typeof f === 'object' ? f.id : f,
+            )
+
+            return { id: { in: finishIds } }
+          },
         },
       ],
     },

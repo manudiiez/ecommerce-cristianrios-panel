@@ -435,10 +435,19 @@ export interface Kit {
    */
   items?:
     | {
-        name: string;
+        /**
+         * Solo para ítems sin producto (ventas por WhatsApp). Si elegís un producto, se usa su nombre automáticamente.
+         */
+        name?: string | null;
         qty: number;
         product?: (number | null) | Product;
+        /**
+         * Solo se muestran los tamaños disponibles del producto elegido.
+         */
         size?: (number | null) | Size;
+        /**
+         * Solo se muestran los acabados disponibles del producto elegido.
+         */
         finish?: (number | null) | Finish;
         id?: string | null;
       }[]
